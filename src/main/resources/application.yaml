@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/controle_saldo
+    username: controle
+    password: controle
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
