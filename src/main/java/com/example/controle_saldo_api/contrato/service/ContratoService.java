@@ -47,4 +47,15 @@ public class ContratoService {
                 .orElseThrow(() -> new ContratoNaoEncontradoException(id));
     }
 
+    @Transactional
+    public Contrato buscarComLock(UUID id) {
+        return contratoRepository.buscarComLock(id)
+                .orElseThrow(() -> new ContratoNaoEncontradoException(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Contrato> listarEntidades() {
+        return contratoRepository.findAll();
+    }
+
 }

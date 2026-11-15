@@ -1,4 +1,5 @@
 package com.example.controle_saldo_api.contrato.entity;
+import com.example.controle_saldo_api.lancamento.entity.Lancamento;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,12 +38,12 @@ public class Contrato {
     @Column(name = "data_fim", nullable = false)
     private LocalDate dataFim;
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof Lancamento other)) return false;
-//        return id != null && Objects.equals(id, other.id);
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Lancamento other)) return false;
+        return id != null && Objects.equals(id, other.getId());
+    }
 
     @Override
     public int hashCode() {
