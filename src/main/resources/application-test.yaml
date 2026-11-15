@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/controle_saldo_test
+    username: controle
+    password: controle
