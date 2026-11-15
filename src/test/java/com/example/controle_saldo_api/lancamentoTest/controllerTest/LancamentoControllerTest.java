@@ -1,4 +1,4 @@
-package com.example.controle_saldo_api.lancamentoTest.controllerTes;
+package com.example.controle_saldo_api.lancamentoTest.controllerTest;
 
 
 import com.jayway.jsonpath.JsonPath;
