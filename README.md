@@ -53,23 +53,36 @@ Depois, execute a classe `ControleSaldoApiApplication` pela IDE, ou pelo termina
 
 A API fica disponível em `http://localhost:8080`. Na inicialização, o Flyway aplica as migrations `V1` e `V2` no banco `controle_saldo`.
 
+### 3. Carregar dados de demonstração (opcional)
+
+O arquivo `src/main/resources/db/seed/dados-cenarios.sql` cria cinco contratos, cada um em um cenário de alerta: saudável, próximo do limite, baixo consumo, vigência expirada e com estornos. Ele não faz parte das migrations, então precisa ser executado manualmente, com o banco de pé:
+
+```bash
+docker compose exec -T db psql -U controle -d controle_saldo < src/main/resources/db/seed/dados-cenarios.sql
+```
+
+O script é idempotente: rodar de novo não duplica os dados. Para remover os dados de demonstração, apague os contratos com os IDs `c0000000-0000-0000-0000-00000000000N`, junto com os lançamentos vinculados.
+
 ## Testes
 
 ```bash
-./mvnw verify
+./mvnw test
 ```
 
-Os testes unitários (`*Test`) rodam sem banco. Os testes de controller e de contexto usam o banco `controle_saldo_test`, no mesmo PostgreSQL, com o perfil `test`. Antes de rodar, crie o banco:
+Os testes são de dois tipos:
+
+- **Unitários** (`ContratoServiceTest`, `LancamentoServiceTest`, `SaldoServiceTest`): testam as regras de negócio com Mockito. Não usam banco.
+- **De integração de controller** (`ContratoControllerTest`, `LancamentoControllerTest`, e o teste de contexto): sobem a aplicação com o perfil `test`, executam os endpoints via MockMvc e gravam no banco `controle_saldo_test`, no mesmo PostgreSQL. Não usam Testcontainers.
+
+Antes de rodar os testes de controller, crie o banco de teste:
 
 ```bash
 docker exec -it controle-saldo-db psql -U controle -d controle_saldo -c "CREATE DATABASE controle_saldo_test;"
 ```
 
-Os testes de integração (`*IT`) ficam desativados por padrão. Para executá-los, use:
+## Integração contínua
 
-```bash
-./mvnw verify -DskipITs=false
-```
+O workflow `.github/workflows/ci.yml` roda a cada push e pull request. Ele sobe um PostgreSQL 16 como serviço, com o banco `controle_saldo_test`, e executa `./mvnw test`, que inclui os testes unitários e os de integração de controller.
 
 ## Endpoints
 
@@ -134,8 +147,8 @@ Os alertas são calculados por contrato, com base no percentual consumido do val
 | Alerta | Condição |
 |---|---|
 | `PROXIMO_DO_LIMITE` | Consumo igual ou acima de 80% |
-| `RISCO_SUBUTILIZACAO` | Consumo abaixo de 20%, com 50% ou mais da vigência decorrida |
-| `NENHUM` | Demais casos |
+| `BAIXO_CONSUMO` | Consumo abaixo de 20%, com 50% ou mais da vigência decorrida |
+| `NORMAL` | Demais casos |
 
 Os percentuais são constantes em `SaldoService`, para ajuste sem mudança na lógica. A data de referência vem de um `Clock` injetado, o que torna os testes determinísticos.
 
