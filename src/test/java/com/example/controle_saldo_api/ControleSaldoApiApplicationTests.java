@@ -1,13 +1,11 @@
 package com.example.controle_saldo_api;
 
+
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class ControleSaldoApiApplicationTests {
+class ControleSaldoApiApplicationIT extends IntegracaoTestBase {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextoSobeComBancoDeTeste() {
+    }
 }
